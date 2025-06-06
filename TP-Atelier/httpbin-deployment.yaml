@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpbin
+  namespace: httpbin-test
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: httpbin
+  template:
+    metadata:
+      labels:
+        app: httpbin
+    spec:
+      containers:
+      - name: httpbin
+        image: kennethreitz/httpbin:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: MODE
+          valueFrom:
+            configMapKeyRef:
+              name: httpbin-config
+              key: MODE
+        livenessProbe:
+          httpGet:
+            path: /status/200
+            port: 80
+          initialDelaySeconds: 5
+        volumeMounts:
+        - name: tmp-volume
+          mountPath: /tmp
+
+      volumes:
+      - name: tmp-volume
+        emptyDir: {}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
